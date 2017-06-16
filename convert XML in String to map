@@ -1,0 +1,41 @@
+//把组织好的报文发送给朋代相应的url
+String asyncMsg = new Httpz().post(url, respMap);
+if (logger.isInfoEnabled()) {
+  logger.info(TAG + "【快捷支付】返回数据 --> " + asyncMsg);
+}
+
+//朋代返回的是XML，把XML解析成HashMap
+HashMap<String, String> values = new HashMap<String, String>();
+Document xml = convertStringToDocument(asyncMsg);
+Node user = xml.getFirstChild();
+NodeList childs = user.getChildNodes();
+Node child;
+for (int i = 0; i < childs.getLength(); i++) {
+    child = childs.item(i);
+    System.out.println(child.getNodeName());
+    System.out.println(child.getTextContent());
+    values.put(child.getNodeName(), child.getTextContent());
+}
+
+String RESP_CODE = values.get("RESP_CODE") == null ? null : (String) values.get("RESP_CODE");
+logger.info(TAG + "【快捷支付】返回数据 --> 响应码是：" + RESP_CODE);
+String RESP_DESC = values.get("RESP_DESC") == null ? null : (String) values.get("RESP_DESC");
+logger.info(TAG + "【快捷支付】返回数据 --> 响应描述是：" + RESP_DESC);
+String BANKRESPFLOW = values.get("ORDER_ID") == null ? null : (String) values.get("ORDER_ID");
+logger.info(TAG + "【快捷支付】返回数据 --> 银行响应描述是：" + BANKRESPFLOW);
+
+
+
+
+private Document convertStringToDocument(String asyncMsg) {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder;
+        try {
+            builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(new InputSource(new StringReader(asyncMsg)));
+            return doc;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+	}
