@@ -1,0 +1,6 @@
+//把组织好的报文发送给朋代相应的url
+String asyncMsg = new Httpz().post(webpay_url, respMap);
+
+//朋代返回的是XML，把XML解析成HashMap
+/*HashMap<String, String> values = new HashMap<String, String>();
+Document xml = convertStringToDocument(asyncMsg);
