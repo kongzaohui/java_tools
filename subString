@@ -1,0 +1,5 @@
+String URL_FROM_PAY_INFO = PAY_INFO.substring(PAY_INFO.indexOf("action='"), PAY_INFO.indexOf("' method="));
+logger.info(TAG + "【网关支付】返回数据 --> 返回的交易地址是：" + URL_FROM_PAY_INFO);
+//String new_webpay_url = URL_FROM_PAY_INFO.substring(8, URL_FROM_PAY_INFO.indexOf("?")); 
+String new_webpay_url = URL_FROM_PAY_INFO.substring(8, URL_FROM_PAY_INFO.length()); 
+logger.info(TAG + "【网关支付】返回数据 --> 截取的交易地址是：" + new_webpay_url);
