@@ -1,0 +1,54 @@
+private static final Map<String, Object> merMap = MerchantEnumMap.getMapInstance();
+
+String merPrefix = pengdaiChannelUtils.safeToString(merMap.get(reqMap.remove("merchantNo")));
+logger.info(TAG + "-【网关支付交易】报文数据 (" + merPrefix + ") --> " + reqMap);
+
+String merchantNo = config.getString(merPrefix + ".merchantNo");
+
+
+CONFIG
+# -------------  Specified Merchant No. List -------------- #
+gwmerchantNo={"200001":"GWPM"\,"200005":"HXPM"\,"testanton":"test001"}
+GWPM.merchantNo=C00001
+HXPM.merchantNo=C00001
+test001.merchantNo=990120745840
+
+
+MerchantEnumMap.java
+package com.huadao.channel.enummap;
+
+import java.util.Map;
+import java.util.Optional;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.huadao.channel.pengdai.ServiceConfig;
+
+public class MerchantEnumMap {
+
+	private static final Logger LOGGER = Logger.getLogger(MerchantEnumMap.class);
+
+	private volatile static Map<String, Object> merMap;
+
+	public static Map<String, Object> getMapInstance() {
+		if (merMap == null) {
+			synchronized (MerchantEnumMap.class) {
+				if (merMap == null) {
+					ServiceConfig config = ServiceConfig.getInstance();
+					String jsonConfig = Optional.ofNullable(config.getString("gwmerchantNo")).orElse("");
+					if (jsonConfig.length() == 0) {
+						LOGGER.error(
+								"There is not GWG Account on the list, Please kindly check the serviceconfig.properties");
+						return null;
+					}
+					LOGGER.info("MerMap Loaded : " + jsonConfig);
+					JSONObject object = JSON.parseObject(jsonConfig);
+					merMap = object;
+				}
+			}
+		}
+		return merMap;
+	}
+}
