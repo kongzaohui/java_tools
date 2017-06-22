@@ -1,0 +1,29 @@
+package com.anton.test;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
+public class BigDecimal_Test {
+	
+	private static final BigDecimal amountScale = new BigDecimal(100);
+  //四种转换的方法
+	public static void main(String[] args) {
+		int amount1 = 3;
+		double amount = amount1/100.00;
+		System.out.println(amount);
+		
+		BigDecimal amount_big = new BigDecimal(amount);		
+		amount_big = amount_big.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		System.out.println(amount_big);
+		
+		DecimalFormat df = new DecimalFormat("#.00");
+		String format = df.format(amount);
+		System.out.println(format);
+		
+		BigDecimal amount_new = new BigDecimal(amount1);
+		amount_new = amount_new.setScale(2, BigDecimal.ROUND_HALF_UP);
+		amount_new = amount_new.divide(amountScale);
+		System.out.println(amount_new);
+	}
+
+}
