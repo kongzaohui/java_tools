@@ -1,0 +1,258 @@
+package com.webservice.util;
+
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+public class ColumnReflectionUtil {
+	public static final Logger logger = LoggerFactory.getLogger(ColumnReflectionUtil.class);
+
+	public List<Object> reflect(Class passClass,SQLQuery query){
+
+		List<Object> returnList = null;
+		try{
+	        //no paramater
+	    	Class noparams[] = {};
+	        //String parameter
+	    	Class[] paramString = new Class[1];
+	    	paramString[0] = String.class;
+	    	//int parameter
+	    	Class[] paramInt = new Class[1];
+	    	paramInt[0] = Integer.class;
+	    	//BigDecimal parameter
+	    	Class[] paramBigDecimal = new Class[1];
+	    	paramBigDecimal[0] = BigDecimal.class;
+	    	Class[] paramDate = new Class[1];
+	    	paramDate[0] = Date.class;
+	    	
+	    	//pass in the class
+	    	Class cls = passClass;
+	    	Method method = null;
+	        
+	        List<Map<String,Object>> src = query.list();
+	        
+	        //collect the method class list
+	        Map<String,Class> methodTypeMap = new HashMap<String,Class>();
+	        Class type = null;
+	        Class setterClass = null;
+	        String setterFuncName = null;
+	        Date nullDate = null;
+	    	Method[] methodArray = cls.getMethods();
+	    	for(Method methodObj : methodArray){
+	    		//logger.info("method name:"+methodObj.getName());
+	    		if(methodObj.getName().startsWith("set")){
+	    			type = methodObj.getParameterTypes()[0];
+	    			methodTypeMap.put(methodObj.getName(), type);
+	    		}else{
+	    			//getter do later
+	    		}
+	    	}
+	    	
+	    	
+	    	Object classObj = null;
+	        
+	    	List<String> keyList = null;
+	    	Calendar calendarObj = Calendar.getInstance();
+	    	
+	        for (Map<String,Object> map:src) {// for each row
+	        	try{
+	        		//New object
+	        		if(returnList == null){
+	        			returnList = new ArrayList<Object>();
+	        		}
+		        	classObj = cls.newInstance();
+		        	//prepare the column name as the getter/setter once
+		        	if(keyList == null){
+		        		keyList = new ArrayList();
+		        		for (String key : map.keySet()){
+		        			keyList.add(key);
+		        		}
+		        	}
+		        	
+		        	//loop through all column to set value by reflection
+		        	for(String columnName : keyList){
+		        		//collect the value as object
+		        		Object obj = map.get(columnName);
+	
+		        		setterFuncName = "set"+columnName.substring(0, 1).toUpperCase()+columnName.substring(1);
+		        		//logger.info("funciton name:"+setterFuncName);
+		        		setterClass = methodTypeMap.get(setterFuncName);
+		        		//logger.info("what is class:"+setterClass.getName());
+		        		
+		        		if( setterClass.getName().equals("java.lang.Integer")){
+		        			//logger.info( "is Integer class");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramInt);
+		        			method.invoke(classObj, ((Byte)obj).intValue());
+		        		}else if( setterClass.getName().equals("java.util.Date")){
+		        			//logger.info( "is int Date");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramDate);
+		        			if(obj == null){
+		        				
+		        				method.invoke(classObj, nullDate);
+		        			}else{
+			        			calendarObj.setTimeInMillis(((java.sql.Timestamp)obj).getTime());
+			        			method.invoke(classObj, calendarObj.getTime());
+		        			}
+		        		}else if( setterClass.isInstance(int.class)){
+		        			logger.info( "is int class");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramInt);
+		        			method.invoke(classObj, ((Byte)obj).intValue());
+		        		}else if(setterClass.isInstance(BigDecimal.class)){
+		        			logger.info( "is BigDecimal class");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramBigDecimal);
+		        			method.invoke(classObj, new BigDecimal((Byte)obj).doubleValue());
+		        		}else {
+		        			//logger.info( "is Default string class");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramString);
+			        		method.invoke(classObj, (String)obj );
+		        		} 
+		        	}
+		        	returnList.add(classObj);
+		        	
+	        	}catch(Exception ex){
+	        		logger.info("Exception for : "+setterFuncName);
+	        		ex.printStackTrace();
+	    		}
+	        	
+	        }
+	        //return returnList;
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}finally{
+			return returnList;
+		}
+	}
+	
+	
+	public List<Object> reflectHibernateModel(Class passClass,SQLQuery query){
+
+		List<Object> returnList = null;
+		try{
+	        //no paramater
+	    	Class noparams[] = {};
+	        //String parameter
+	    	Class[] paramString = new Class[1];
+	    	paramString[0] = String.class;
+	    	//int parameter
+	    	Class[] paramInt = new Class[1];
+	    	paramInt[0] = Integer.class;
+	    	//BigDecimal parameter
+	    	Class[] paramBigDecimal = new Class[1];
+	    	paramBigDecimal[0] = BigDecimal.class;
+	    	Class[] paramDate = new Class[1];
+	    	paramDate[0] = Date.class;
+	    	
+	    	//pass in the class
+	    	Class cls = passClass;
+	    	Method method = null;
+	        
+	        List<Map<String,Object>> src = query.list();
+	        
+	        //collect the method class list
+	        Map<String,Class> methodTypeMap = new HashMap<String,Class>();
+	        Class type = null;
+	        Class setterClass = null;
+	        String setterFuncName = null;
+	        Date nullDate = null;
+	    	Method[] methodArray = cls.getMethods();
+	    	for(Method methodObj : methodArray){
+	    		//logger.info("method name:"+methodObj.getName());
+	    		if(methodObj.getName().startsWith("set")){
+	    			type = methodObj.getParameterTypes()[0];
+	    			methodTypeMap.put(methodObj.getName(), type);
+	    		}else{
+	    			//getter do later
+	    		}
+	    	}
+	    	
+	    	Object classObj = null;
+	    	List<String> keyList = null;
+	    	Map<String,String> columnFuncNamMap = null;
+	    	Calendar calendarObj = Calendar.getInstance();
+	    	
+	        for (Map<String,Object> map:src) {
+	        	try{
+	        		//New object
+	        		if(returnList == null){
+	        			returnList = new ArrayList<Object>();
+	        		}
+		        	classObj = cls.newInstance();
+		        	//prepare the column name as the getter/setter once
+		        	if(keyList == null){
+		        		keyList = new ArrayList();
+		        		columnFuncNamMap = new HashMap();
+		        		for (String key : map.keySet()){
+		        			keyList.add(key);
+		        			
+		        			String[] parts = key.split("_");
+		        			String newFuncationName = "";
+		        			for(String part : parts){
+		        				newFuncationName =newFuncationName+ part.substring(0, 1).toUpperCase()+part.substring(1);
+		        			}
+		        			columnFuncNamMap.put(key, "set"+newFuncationName);
+		        		}
+		        	}
+		        	
+		        	//loop through all column to set value by reflection
+		        	for(String columnName : keyList){
+		        		//collect the value as object
+		        		Object obj = map.get(columnName);
+		        		
+		        		setterFuncName = columnFuncNamMap.get(columnName);
+		        		//logger.info("funciton name:"+setterFuncName);
+		        		setterClass = methodTypeMap.get(setterFuncName);
+		        		//logger.info("what is class:"+setterClass.getName());
+		        		
+		        		if( setterClass.getName().equals("java.lang.Integer")){
+		        			//logger.info( "is Integer class");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramInt);
+		        			method.invoke(classObj, ((Byte)obj).intValue());
+		        		}else if( setterClass.getName().equals("java.util.Date")){
+		        			//logger.info( "is int Date");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramDate);
+		        			if(obj == null){
+		        				
+		        				method.invoke(classObj, nullDate);
+		        			}else{
+			        			calendarObj.setTimeInMillis(((java.sql.Timestamp)obj).getTime());
+			        			method.invoke(classObj, calendarObj.getTime());
+		        			}
+		        		}else if( setterClass.isInstance(int.class)){
+		        			logger.info( "is int class");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramInt);
+		        			method.invoke(classObj, ((Byte)obj).intValue());
+		        		}else if(setterClass.isInstance(BigDecimal.class)){
+		        			logger.info( "is BigDecimal class");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramBigDecimal);
+		        			method.invoke(classObj, new BigDecimal((Byte)obj).doubleValue());
+		        		}else {
+		        			//logger.info( "is Default string class");
+		        			method = cls.getDeclaredMethod(setterFuncName, paramString);
+			        		method.invoke(classObj, (String)obj );
+		        		} 
+		        	}
+		        	returnList.add(classObj);
+		        	
+	        	}catch(Exception ex){
+	        		ex.printStackTrace();
+	    		}
+	        	
+	        }
+	        //return returnList;
+		}catch(Exception ex){
+			ex.printStackTrace();
+			//logger.error(ex.toString());
+		}finally{
+			return returnList;
+		}
+	}
+}
