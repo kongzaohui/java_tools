@@ -3,3 +3,21 @@ logger.info(TAG + "【网关支付】返回数据 --> 返回的交易地址是�
 //String new_webpay_url = URL_FROM_PAY_INFO.substring(8, URL_FROM_PAY_INFO.indexOf("?")); 
 String new_webpay_url = URL_FROM_PAY_INFO.substring(8, URL_FROM_PAY_INFO.length()); 
 logger.info(TAG + "【网关支付】返回数据 --> 截取的交易地址是：" + new_webpay_url);
+
+
+
+
+String datetime = new Date().toString();
+datetime = datetime.replace(" ", "");
+datetime = datetime.replace(":", "");
+
+String outputPdfFileName = "C://Users/zanderkong/Desktop/sample_total_master_report.pdf";
+System.out.println("outputPdfFileName.length()--->" + outputPdfFileName.length());
+
+String prefix = outputPdfFileName.substring(0, outputPdfFileName.length()-4);
+String suffix = outputPdfFileName.substring(outputPdfFileName.length()-4, outputPdfFileName.length());
+System.out.println("prefix--->" + prefix);
+System.out.println("suffix--->" + suffix);
+
+String retrunFileName = prefix + "_" + datetime + suffix;
+System.out.println("retrunFileName--->" + retrunFileName);
