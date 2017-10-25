@@ -6,7 +6,8 @@ int hour= 0,minute= 0,second=0;
 try {
   start = sdf.parse(starttime);
   calendar.setTime(start);
-  hour = calendar.get(Calendar.HOUR); //returns the hour
+  hour = calendar.get(Calendar.HOUR); //returns the hour，以12小时制
+  hour2 = calendar.get(Calendar.HOUR_OF_DAY); //returns the hour，以24小时制
   minute = calendar.get(Calendar.MINUTE); //returns the minute
   second = calendar.get(Calendar.SECOND); //returns the second
 } catch (ParseException e) {
