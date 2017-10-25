@@ -1,9 +1,32 @@
 String starttime = "2014-03-27 14:00:00.0";
 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-Date start = sdf.parse(starttime);
-log.info("解析后是开始时间--->" + start);
+Date start = null;
+Calendar calendar = Calendar.getInstance();
+int hour= 0,minute= 0,second=0;
+try {
+  start = sdf.parse(starttime);
+  calendar.setTime(start);
+  hour = calendar.get(Calendar.HOUR); //returns the hour
+  minute = calendar.get(Calendar.MINUTE); //returns the minute
+  second = calendar.get(Calendar.SECOND); //returns the second
+} catch (ParseException e) {
+  e.printStackTrace();
+}
+System.out.println("解析后是开始时间--->" + start);
+System.out.println("解析后的小时是--->" + hour + "解析后的分钟是--->" + minute + "解析后的秒是--->" + second);
 
-输出：Thu Mar 27 14:00:00 CST 2014
+Date present = new Date();
+if (present.after(start)) {
+  System.out.println("present在start之后");
+}else {
+  System.out.println("present在start之前");
+}
+
+输出：
+解析后是开始时间--->Thu Mar 27 14:00:00 CST 2014
+解析后的小时是--->2解析后的分钟是--->0解析后的秒是--->0
+present在start之后
+
 
 
 
