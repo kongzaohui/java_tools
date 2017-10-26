@@ -1,9 +1,18 @@
+String weekdayList = "2,3,4,5,6";
+String[] weekdayArray = weekdayList.split(",");
 Date present = new Date();
 Calendar calendar = Calendar.getInstance();
 calendar.setTime(present);
-int DAY_OF_WEEK = calendar.get(Calendar.DAY_OF_WEEK); //returns the DAY_OF_WEEK
+
+Integer DAY_OF_WEEK = calendar.get(Calendar.DAY_OF_WEEK);
 System.out.println("DAY_OF_WEEK---->" + DAY_OF_WEEK);
+String DAY_OF_WEEK_String = DAY_OF_WEEK.toString();
+boolean triggerCondition = Arrays.asList(weekdayArray).contains(DAY_OF_WEEK_String);
+System.out.println("DAY_OF_WEEK是否在weekdayArray中---->" + triggerCondition);
 
 
 输出：DAY_OF_WEEK---->5
+DAY_OF_WEEK是否在weekdayArray中---->true
+
+
 星期四是第5天
