@@ -42,3 +42,17 @@ if (present.after(start)) {
 
 
 
+//Convert a Date to a String using a format string and to Date reversely
+
+Date present = new Date();
+String presentString = DateFormat.getDateInstance().format(present);
+DateFormat df = new SimpleDateFormat("HH:mm:ss");
+String starttimeString = df.format(starttime);
+//starttime是Date类型
+presentString = presentString + " " + starttimeString;
+log.info("presentString元素的内容是--->" + presentString);
+log.info("starttimeString元素的内容是--->" + starttimeString);
+
+SimpleDateFormat lsdStrFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+Date strD = lsdStrFormat.parse(presentString); 
+log.info("strD元素的内容是--->" + strD);
