@@ -56,3 +56,7 @@ log.info("starttimeString元素的内容是--->" + starttimeString);
 SimpleDateFormat lsdStrFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
 Date strD = lsdStrFormat.parse(presentString); 
 log.info("strD元素的内容是--->" + strD);
+
+//也可以
+Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+String s = formatter.format(date);
