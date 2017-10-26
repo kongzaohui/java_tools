@@ -1,0 +1,9 @@
+Date present = new Date();
+Calendar calendar = Calendar.getInstance();
+calendar.setTime(present);
+int DAY_OF_WEEK = calendar.get(Calendar.DAY_OF_WEEK); //returns the hour
+System.out.println("DAY_OF_WEEK---->" + DAY_OF_WEEK);
+
+
+输出：DAY_OF_WEEK---->5
+星期四是第5天
