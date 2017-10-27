@@ -16,6 +16,7 @@ java.util.Date和java.sql.Date的区别及应用
 
 Email-noLogin<br>
 有一些server不需要login可以直接发送email，连接的时候采用<br>
+props.setProperty("mail.smtp.auth", "false"); // 不需要请求认证<br>
 Session session = Session.getInstance(props);<br><br>
 //transport.connect(myEmailAccount, myEmailPassword);<br>
 transport.connect();
