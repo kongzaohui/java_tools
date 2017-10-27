@@ -1,0 +1,28 @@
+#首先，找到你的打印机的名字
+
+package com.test.general;
+
+import java.util.Arrays;
+import javax.print.DocFlavor;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+
+public class PrintTest2 {
+
+	public static void main(String[] args) {
+		DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PAGEABLE;
+		PrintRequestAttributeSet patts = new HashPrintRequestAttributeSet();
+		PrintService[] ps = PrintServiceLookup.lookupPrintServices(flavor, patts);
+		if (ps.length == 0) {
+			throw new IllegalStateException("No Printer found");
+		}
+		System.out.println("Available printers: " + Arrays.asList(ps));
+	}
+}
+
+#输出：Available printers: [Win32 Printer : PDFill PDF&Image Writer, 
+Win32 Printer : Microsoft XPS Document Writer, 
+Win32 Printer : Fax, Win32 Printer : \\10.55.1.5\RICOH Pro 8120S PCL 6 (ACC/Credit), 
+Win32 Printer : \\10.55.1.5\RICOH MP C4503 PCL 6 (ACC/Credit)(Small)]
