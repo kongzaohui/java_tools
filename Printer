@@ -26,3 +26,45 @@ public class PrintTest2 {
 Win32 Printer : Microsoft XPS Document Writer, 
 Win32 Printer : Fax, Win32 Printer : \\10.55.1.5\RICOH Pro 8120S PCL 6 (ACC/Credit), 
 Win32 Printer : \\10.55.1.5\RICOH MP C4503 PCL 6 (ACC/Credit)(Small)]
+#选取\\10.55.1.5\RICOH MP C4503 PCL 6 (ACC/Credit)(Small)，将它改变为
+\\\\10.55.1.5\\RICOH MP C4503 PCL 6 (ACC/Credit)(Small)
+
+
+
+#发送打印任务
+package com.test.general;
+
+import java.awt.print.PrinterJob;
+import java.io.File;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.printing.PDFPageable;
+
+public class PrintTest {
+
+    public static void main(String args[]) throws Exception {
+    	
+    	String PrinterName = "\\\\10.55.1.5\\RICOH MP C4503 PCL 6 (ACC/Credit)(Small)";
+
+        PDDocument document = PDDocument.load(new File("//C:/Users/zanderkong/Desktop/SinoCloud_eSchool.pdf"));// 读取本地文件
+
+        PrintService myPrintService = findPrintService(PrinterName);
+
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPageable(new PDFPageable(document));
+        job.setPrintService(myPrintService);
+        job.print();
+
+    }       
+
+    private static PrintService findPrintService(String printerName) {
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService printService : printServices) {
+            if (printService.getName().trim().equals(printerName)) {
+                return printService;
+            }
+        }
+        return null;
+    }
+}
