@@ -1,4 +1,5 @@
 #创建一封复杂邮件（文本+图片+附件）
+#附件名字过长可能造成pdf被转化成dat
 #要咨询IT部门，看看要不要登录
 package com.test.general;
 
