@@ -60,3 +60,7 @@ log.info("strD元素的内容是--->" + strD);
 //也可以
 Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 String s = formatter.format(date);
+
+//Date转化为Timestamp
+Date date = new Date();
+Timestamp timeStamp = new Timestamp(date.getTime());
