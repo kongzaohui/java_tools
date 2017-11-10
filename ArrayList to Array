@@ -1,0 +1,10 @@
+Bean_HKSBL_MARGIN_OUTSTANDING[] arrayTotal = null;
+
+ArrayList<Object> totalMasterList = (ArrayList<Object>) columnReflectionUtil
+					.reflect(Bean_HKSBL_MARGIN_OUTSTANDING.class, rs_BEAN);
+
+int BEAN_size = totalMasterList.size();
+logger.info("totalMasterList的总个数是--->" + BEAN_size);
+			
+//Bean_HKSBL_MARGIN_OUTSTANDING[] 
+arrayTotal = totalMasterList.toArray(new Bean_HKSBL_MARGIN_OUTSTANDING[BEAN_size]);
