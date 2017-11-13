@@ -1,1 +1,18 @@
+#List在remove的时候，最好从后面开始往前遍历
 
+for (int i = count; i > 0; i--) {
+      log.info("第" + (i) + "次循环");
+      ReportScheduler reportScheduler = (ReportScheduler) returnReportSchedulerList.get(i - 1);
+
+      boolean enable;
+      boolean enableWeekDay = timeDateWeekUtil.getDayofWeek(weekdayList);
+      boolean enableEndTime;
+
+      if (!(enableWeekDay && enable&&enableEndTime)) {
+        returnReportSchedulerList.remove(i - 1);
+        count--;
+        log.info("---不在今天执行此任务---");
+      } else {
+        log.info("---在今天执行此任务---");
+      }
+}
