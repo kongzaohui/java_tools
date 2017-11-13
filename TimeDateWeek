@@ -1,0 +1,98 @@
+package com.test.general;
+
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class TimeDateWeek {
+	
+	public static final Logger log = LoggerFactory.getLogger(TimeDateWeek.class);
+
+	public static void main(String[] args) {
+		// DAY_OF_WEEK
+		String weekdayList = "2,3,4,5,6";
+		String[] weekdayArray = weekdayList.split(",");
+		Date present1 = new Date();
+		Calendar calendar1 = Calendar.getInstance();
+		calendar1.setTime(present1);
+
+		Integer DAY_OF_WEEK = calendar1.get(Calendar.DAY_OF_WEEK);
+		log.info("DAY_OF_WEEK---->这是本周第" + DAY_OF_WEEK + "天！");
+		String DAY_OF_WEEK_String = DAY_OF_WEEK.toString();
+		boolean triggerCondition = Arrays.asList(weekdayArray).contains(DAY_OF_WEEK_String);
+		log.info("DAY_OF_WEEK是否在weekdayArray中---->" + triggerCondition);
+
+		// String to Date
+		String starttime = "2014-03-27 14:08:19.256";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		Date start = null;
+		Calendar calendar2 = Calendar.getInstance();
+		// int hour= 0,minute= 0,second=0;
+		try {
+			start = sdf.parse(starttime);
+			calendar2.setTime(start);
+			int hour = calendar2.get(Calendar.HOUR); // returns the hour，以12小时制
+			int hour2 = calendar2.get(Calendar.HOUR_OF_DAY); // returns the hour，以24小时制
+			int minute = calendar2.get(Calendar.MINUTE); // returns the minute
+			int second = calendar2.get(Calendar.SECOND); // returns the second
+
+			log.info("解析后是开始时间--->" + start);
+			log.info("解析后十二十四时制是--->" + hour2 + "--解析后十二小时制是--->" + hour + "--解析后的分钟是--->" + minute + "--解析后的秒是--->" + second);
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		Date present = new Date();
+		if (present.after(start)) {
+			log.info("present在start之后");
+		} else {
+			log.info("present在start之前");
+		}
+
+		
+		// Convert a Date to a String using a format string and to Date reversely
+		Date present2 = new Date();
+		String presentString1 = DateFormat.getDateInstance().format(present2);
+		log.info("presentString1元素的内容是--->" + presentString1);
+		
+		DateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss");
+		String starttimeString1 = dateFormat1.format(start);
+		log.info("starttimeString1元素的内容是--->" + starttimeString1);
+		
+		/*DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+		String starttimeString2 = dateFormat2.format(start);*/
+		
+		// starttime是Date类型
+		String presentString2 = presentString1 + " " + starttimeString1;
+		log.info("presentString2元素的内容是--->" + presentString2);
+
+		//use SimpleDateFormat
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date presentDate;
+		try {
+			presentDate = simpleDateFormat.parse(presentString2);
+			log.info("presentDate元素的内容是--->" + presentDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		// use Format
+		Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String present2String = formatter.format(present2);
+		log.info("present2String元素的内容是--->" + present2String);
+
+		// Date转化为Timestamp
+		Date date = new Date();
+		Timestamp timeStamp = new Timestamp(date.getTime());
+		log.info("timeStamp元素的内容是--->" + timeStamp);
+	} 
+}
