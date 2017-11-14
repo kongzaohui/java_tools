@@ -2,7 +2,6 @@ package com.test.general;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -12,87 +11,149 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TimeDateWeek {
+public class TimeDateWeekUtil {
+
+	public static final Logger log = LoggerFactory.getLogger(TimeDateWeekUtil.class);
 	
-	public static final Logger log = LoggerFactory.getLogger(TimeDateWeek.class);
+	Date present = new Date();
+	Calendar calendar = Calendar.getInstance();
+	SimpleDateFormat halfSDF = new SimpleDateFormat("HH:mm:ss");
+	SimpleDateFormat fullSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public static void main(String[] args) {
+	public boolean getDayofWeek(String weekdayList) {
 		// DAY_OF_WEEK
-		String weekdayList = "2,3,4,5,6";
+		// String weekdayList = "2,3,4,5,6";
 		String[] weekdayArray = weekdayList.split(",");
-		Date present1 = new Date();
-		Calendar calendar1 = Calendar.getInstance();
-		calendar1.setTime(present1);
+		calendar.setTime(present);
 
-		Integer DAY_OF_WEEK = calendar1.get(Calendar.DAY_OF_WEEK);
-		log.info("DAY_OF_WEEK---->这是本周第" + DAY_OF_WEEK + "天！");
+		Integer DAY_OF_WEEK = calendar.get(Calendar.DAY_OF_WEEK);
+		// log.info("DAY_OF_WEEK---->这是本周第" + DAY_OF_WEEK + "天！");
 		String DAY_OF_WEEK_String = DAY_OF_WEEK.toString();
 		boolean triggerCondition = Arrays.asList(weekdayArray).contains(DAY_OF_WEEK_String);
-		log.info("DAY_OF_WEEK是否在weekdayArray中---->" + triggerCondition);
-
-		// String to Date
-		String starttime = "2014-03-27 14:08:19.256";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-		Date start = null;
-		Calendar calendar2 = Calendar.getInstance();
-		// int hour= 0,minute= 0,second=0;
-		try {
-			start = sdf.parse(starttime);
-			calendar2.setTime(start);
-			int hour = calendar2.get(Calendar.HOUR); // returns the hour，以12小时制
-			int hour2 = calendar2.get(Calendar.HOUR_OF_DAY); // returns the hour，以24小时制
-			int minute = calendar2.get(Calendar.MINUTE); // returns the minute
-			int second = calendar2.get(Calendar.SECOND); // returns the second
-
-			log.info("解析后是开始时间--->" + start);
-			log.info("解析后十二十四时制是--->" + hour2 + "--解析后十二小时制是--->" + hour + "--解析后的分钟是--->" + minute + "--解析后的秒是--->" + second);
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		Date present = new Date();
-		if (present.after(start)) {
-			log.info("present在start之后");
-		} else {
-			log.info("present在start之前");
-		}
-
-		
-		// Convert a Date to a String using a format string and to Date reversely
-		Date present2 = new Date();
-		String presentString1 = DateFormat.getDateInstance().format(present2);
+		// log.info("DAY_OF_WEEK是否在weekdayArray中---->" + triggerCondition);
+		return triggerCondition;
+	}
+	
+	public boolean isBefore(Date endTime) {
+		// Compare the present time and the end time
+		String presentString1 = DateFormat.getDateInstance().format(present);
 		log.info("presentString1元素的内容是--->" + presentString1);
-		
-		DateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss");
-		String starttimeString1 = dateFormat1.format(start);
-		log.info("starttimeString1元素的内容是--->" + starttimeString1);
-		
-		/*DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-		String starttimeString2 = dateFormat2.format(start);*/
+
+		String endTimeString1 = halfSDF.format(endTime);
+		log.info("starttimeString1元素的内容是--->" + endTimeString1);
 		
 		// starttime是Date类型
-		String presentString2 = presentString1 + " " + starttimeString1;
+		String presentString2 = presentString1 + " " + endTimeString1;
 		log.info("presentString2元素的内容是--->" + presentString2);
 
 		//use SimpleDateFormat
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date presentDate;
+		Date presentEndTime = null;
 		try {
-			presentDate = simpleDateFormat.parse(presentString2);
-			log.info("presentDate元素的内容是--->" + presentDate);
+			presentEndTime = fullSDF.parse(presentString2);
+			log.info("presentEndTime元素的内容是--->" + presentEndTime);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
+		log.info("presentEndTime是--->" + presentEndTime);
+		boolean enableEndTime;
+		if (present.after(presentEndTime)) {
+			log.info("present在presentEndTime之后，停止执行此任务");
+			enableEndTime = false;
+		} else {
+			log.info("present在presentEndTime之前，继续执行此任务");
+			enableEndTime = true;
+		}
+		
+		return enableEndTime;
+	}
 
-		// use Format
-		Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String present2String = formatter.format(present2);
-		log.info("present2String元素的内容是--->" + present2String);
+	public int[] getTimeHMS1(String starttime) {
+		// String to Date
+		//String starttime = "2014-03-27 14:08:19.256";
+		Date start = null;
+		try {
+			start = fullSDF.parse(starttime);
+			calendar.setTime(start);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		int hour = calendar.get(Calendar.HOUR); // returns the hour，以12小时制
+		int hour2 = calendar.get(Calendar.HOUR_OF_DAY); // returns the
+															// hour，以24小时制
+		int minute = calendar.get(Calendar.MINUTE); // returns the minute
+		int second = calendar.get(Calendar.SECOND); // returns the second
 
-		// Date转化为Timestamp
-		Date date = new Date();
-		Timestamp timeStamp = new Timestamp(date.getTime());
-		log.info("timeStamp元素的内容是--->" + timeStamp);
-	} 
+		log.info("解析后是开始时间--->" + start);
+		log.info("解析后十二十四时制是--->" + hour2 + "--解析后十二小时制是--->" + hour + "--解析后的分钟是--->" + minute + "--解析后的秒是--->"
+				+ second);
+
+		int[] HMS = { hour2, minute, second };
+		return HMS;
+	}
+	
+	public int[] getTimeHMS(String startTime) {
+		// String to Date
+		//String starttime = "2014-03-27 14:08:19.256";
+		log.info("解析后是开始时间--->" + startTime);
+		String[] startTimeArray = startTime.split(":");
+		
+		int hour = Integer.parseInt(startTimeArray[0]); // returns the hour，以12小时制
+		int minute = Integer.parseInt(startTimeArray[1]); // returns the minute
+		int second = Integer.parseInt(startTimeArray[2]); // returns the second
+
+		log.info("解析后小时是--->" + hour + "--解析后的分钟是--->" + minute + "--解析后的秒是--->" + second);
+
+		int[] HMS = { hour, minute, second };
+		return HMS;
+	}
+
+	public int getRepeatNumber(String intervals, Date startTime, Date endTime) throws ParseException {
+
+		/*将从DB获得的intervals转化为秒
+		Date intervals_DB_Date = sdf.parse(intervals);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(intervals_DB_Date);
+		// returns the hour
+		int hour_intervals = calendar.get(Calendar.HOUR);
+		// returns the minute
+		int minute_intervals = calendar.get(Calendar.MINUTE);
+		// returns the second
+		int second_intervals = calendar.get(Calendar.SECOND);
+		int intervals_DB_seconds = hour_intervals * 3600 + minute_intervals * 60 + second_intervals;
+		log.info("intervals_DB_Date的内容是-->" + hour_intervals + "小时" + minute_intervals + "分钟" + second_intervals
+				+ "秒，间隔总时间是" + intervals_DB_seconds + "秒");*/
+		int intervals_DB_seconds = this.getSeconds(intervals);
+
+		// 计算DB设置的总间隔时间和一天内执行的次数
+		long interval_calculate_ms = endTime.getTime() - startTime.getTime();
+		int interval_calculate = (int) (interval_calculate_ms / 1000);
+		log.info("interval_calculate计算的时间间隔是-->" + interval_calculate + "--starttime.getTime()" + startTime);
+		int repeatNumber = interval_calculate / intervals_DB_seconds;
+		log.info("执行的次数是--->" + repeatNumber);
+		return repeatNumber;
+	}
+
+	public Integer getSeconds(String intervals) throws ParseException {
+		// 将从DB获得的intervals转化为秒
+		Date intervals_DB_Date = halfSDF.parse(intervals);
+		calendar.setTime(intervals_DB_Date);
+
+		// returns the hour
+		int hour_intervals = calendar.get(Calendar.HOUR);
+		// returns the minute
+		int minute_intervals = calendar.get(Calendar.MINUTE);
+		// returns the second
+		int second_intervals = calendar.get(Calendar.SECOND);
+		Integer intervals_DB_seconds = hour_intervals * 3600 + minute_intervals * 60 + second_intervals;
+		log.info("intervals_DB_Date的内容是-->" + hour_intervals + "小时" + minute_intervals + "分钟" + second_intervals
+				+ "秒，间隔总时间是" + intervals_DB_seconds + "秒");
+		return intervals_DB_seconds;
+	}
+	
+	public Timestamp DateToTimeStamp() {
+		String param = fullSDF.format(present);
+		Timestamp lastRunOn = Timestamp.valueOf(param);
+		return lastRunOn;
+	}
 }
