@@ -1,0 +1,41 @@
+	#use timer
+  public void timerTaskCheckDB() {
+		Timer timer = new Timer();
+		TimerTask hourlyTask = new TimerTask() {
+			@Override
+			public void run() {
+				//run your code here
+			}// void run
+		};// TimerTask
+		  // schedule the task to run starting now and then every hour...
+		timer.schedule(hourlyTask, 0l, 1000 * 60);
+	}
+  
+  
+#use forever while loop
+while(true) {
+    long millis = System.currentTimeMillis();
+    //code to run
+    Thread.sleep(1000 - millis % 1000);
+}//While
+
+
+#use ScheduledExecutorService
+ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+
+ses.scheduleAtFixedRate(new Runnable() {
+    @Override
+    public void run() {
+        // code to run
+    }
+}, 0, 1, TimeUnit.SECONDS);
+
+// when finished
+ses.shutdown();
+
+The advantage of this approach is that: <br>
+you can have a number of tasks with different periods sharing the same thread.<br>
+you can have non-repeating delay or asynchronous tasks.<br>
+you can collect the results in another thread.<br>
+you can shutdown the thread pool with one command.<br>
+
