@@ -20,3 +20,9 @@ props.setProperty("mail.smtp.auth", "false"); // 不需要请求认证<br>
 Session session = Session.getInstance(props);<br><br>
 //transport.connect(myEmailAccount, myEmailPassword);<br>
 transport.connect();
+
+
+#关于命名的技巧
+使用时间作为命名的尾部，当做随机变量，不可控制，保证每次循环都不一样；
+使用可控变量作为头部，在for循环中，可以控制，保证每次循环都一样；
+巧妙地使用“_”作为连接字符，连接可控和不可控，在字符操作中也比较方便识别。
