@@ -1,0 +1,74 @@
+package com.general.test;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class GetIntegerFromFile {
+
+	public static void main(String[] args) {
+		String txtFileName = "C://Users/zanderkong/Desktop/totalList.txt";
+
+		InputStream is;
+		try {
+			is = new FileInputStream(txtFileName);
+			BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+
+			String line = buf.readLine();
+			StringBuilder sb = new StringBuilder();
+			
+			List<String> lines = new ArrayList<String>();
+			while (line != null) {
+				
+				int lastIndex = line.indexOf("_");
+				line = line.substring(0, lastIndex);
+				//sb.append("'").append(line).append("'");
+				//line = "'" + line + "'";
+				//line = "\"" + line + "\"";
+				lines.add(line);
+				
+				sb.append(line).append("\n");
+				line = buf.readLine();	
+			}
+			
+			int count = lines.size();
+			System.out.println("总元素数量--->" + count);
+			
+			String fileAsString = sb.toString(); 
+			System.out.println(fileAsString);
+			
+			Set<String> hs = new HashSet<String>();
+			hs.addAll(lines);
+			lines.clear();
+			lines.addAll(hs);
+
+			int count2 = lines.size();
+			System.out.println("移除相同元素后的总数量--->" + count2);
+			//System.out.println(lines.toString());
+			
+			List<Long> linesLong = new ArrayList<Long>();
+			for (int i = 0; i < count2; i++) {
+				Long param = Long.parseLong(lines.get(i));
+				linesLong.add(param);
+			}
+			
+			Collections.sort(linesLong); //sorting collection
+			for (int i = 0; i < count2; i++) {
+				System.out.println( linesLong.get(i));
+				// + "\n"
+			}	 
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
