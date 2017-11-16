@@ -61,6 +61,7 @@ public class GetIntegerFromFile {
 			}
 			
 			Collections.sort(linesLong); //sorting collection
+			//Collections.sort(linesLong,Collections.reverseOrder()); //sorting collection reversely
 			for (int i = 0; i < count2; i++) {
 				System.out.println( linesLong.get(i));
 				// + "\n"
