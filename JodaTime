@@ -1,0 +1,25 @@
+package com.test.general;
+
+import org.joda.time.Chronology;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Interval;
+import org.joda.time.Period;
+
+public class JodaTimeTest {
+
+	public static void main(String[] args) {
+		DateTime start = new DateTime(2004, 12, 25, 0, 0, 0, 0);
+		DateTime end = new DateTime(2005, 1, 1, 0, 0, 0, 0);
+		Interval interval = new Interval(start, end);
+		System.out.println(interval);
+		
+		Chronology chrono = interval.getChronology();
+		System.out.println(chrono);
+		Duration duration = interval.toDuration();
+		System.out.println(duration.getStandardSeconds());
+		Period period = interval.toPeriod();
+		System.out.println(period.getSeconds());
+	}
+
+}
