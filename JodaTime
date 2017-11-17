@@ -20,6 +20,10 @@ public class JodaTimeTest {
 		System.out.println(duration.getStandardSeconds());
 		Period period = interval.toPeriod();
 		System.out.println(period.getSeconds());
+		
+		DateTime nowTime = new DateTime();
+		DateTime startOfDay =  nowTime.withTimeAtStartOfDay();
+		DateTime endOfDay =  nowTime.millisOfDay().withMaximumValue();
 	}
 
 }
