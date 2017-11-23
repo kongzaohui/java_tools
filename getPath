@@ -1,0 +1,10 @@
+#把相关资源全部放在src文件夹中
+
+
+String t = Thread.currentThread().getContextClassLoader().getResource("/jasperResource").getPath();
+
+
+
+InputStream in  = Thread.currentThread().getContextClassLoader().getResourceAsStream("/config.properties");
+Properties properties = new Properties();
+properties.load(in);
