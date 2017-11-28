@@ -1,0 +1,6 @@
+
+Properties properties = new Properties();
+InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("/config.properties");
+properties.load(in);
+
+boolean testFlag = Boolean.parseBoolean(properties.getProperty("testFlag"));
