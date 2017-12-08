@@ -1,0 +1,18 @@
+package com.general.test;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class NioGetContentFromFile {
+
+	public static void main(String[] args) {
+		String txtFileName = "C://Users/zanderkong/Desktop/highrisk.sql";
+		
+		try {
+			Files.lines(Paths.get(txtFileName), StandardCharsets.UTF_8).forEach(System.out::println);
+		} catch (IOException e1) {
+		}
+	}
+}
