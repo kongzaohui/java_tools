@@ -1,1 +1,166 @@
+package com.pdf.email;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.pdfbox.cos.COSDocument;
+import org.apache.pdfbox.io.RandomAccessFile;
+import org.apache.pdfbox.pdfparser.PDFParser;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+
+public class getEmailFromPdf {
+
+	public static final String folderPath = "C:\\Users\\zanderkong\\Desktop\\error_PDF\\";
+
+	public static void main(String[] args) throws FileNotFoundException {
+		PDFParser parser = null;
+		PDDocument pdDoc = null;
+		COSDocument cosDoc = null;
+		PDFTextStripper pdfStripper;
+
+		String parsedText;
+
+		try {
+			// Open the file
+			String txtLocation = folderPath + "\\folderNames.txt";
+			FileInputStream fstream = new FileInputStream(txtLocation);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+			String folderName;
+			String emailFileName = folderPath + "/emailNames.csv";
+			File log = new File(emailFileName);
+
+			// Read File Line By Line
+
+			while ((folderName = br.readLine()) != null) {
+
+				//System.out.println("folderName--->" + folderName);
+
+				List<String> fileNames = getFileName(folderPath, folderName);
+
+				StringBuilder emailNameContent = new StringBuilder();
+
+				for (int i = 0; i < fileNames.size(); i++) {
+					String fileName = folderPath + folderName + "\\" + fileNames.get(i);
+					System.out.println("fileName-->" + fileName);
+
+					File file = new File(fileName);
+
+					try {
+						parser = new PDFParser(new RandomAccessFile(file, "r"));
+						parser.parse();
+						cosDoc = parser.getDocument();
+						pdfStripper = new PDFTextStripper();
+						pdfStripper.setLineSeparator(" ");
+						pdDoc = new PDDocument(cosDoc);
+						parsedText = pdfStripper.getText(pdDoc);
+
+						// parsedText = parsedText.replaceAll("[^A-Za-z0-9. @]+", "");
+						parsedText = parsedText.replaceAll("\r|\n", "");
+						//|\\s
+
+						// System.out.println(parsedText);
+						
+						//(?<!.*\\s)
+						Matcher m = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.(com)+(.hk)?")
+								.matcher(parsedText);
+						// [a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+
+						while (m.find()) {
+							//System.out.println("匹配的字符串是--->");
+							System.out.println(m.group());
+
+							emailNameContent.append(folderName);
+							emailNameContent.append(',');
+
+							emailNameContent.append(m.group());
+							emailNameContent.append(',');
+							emailNameContent.append('\n');
+						}
+
+						PrintWriter out = new PrintWriter(new FileWriter(log, true));
+						out.append(emailNameContent.toString());
+						out.close();
+
+						if (cosDoc != null)
+							cosDoc.close();
+						if (pdDoc != null)
+							pdDoc.close();
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+				// writeNamesToCSV(emailFileName, emailNameContent.toString());
+
+			}
+			// Close the input stream
+			br.close();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+	}
+
+	public static List<String> getFileName(String folderPathVar, String folderName) {
+
+		File folder = new File(folderPathVar + folderName);
+		System.out.println("文件夹路径是--->" + folderPathVar + folderName);
+		File[] listOfFiles = folder.listFiles();
+		int fileNumbers = listOfFiles.length;
+		//System.out.println("获得的文件个数是--->" + fileNumbers);
+
+		String csvFileName = folderPathVar + "/fileNames.csv";
+
+		StringBuilder fileNameContent = new StringBuilder();
+
+		List<String> fileNames = new ArrayList<String>();
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+
+				String fileName = listOfFiles[i].getName();
+				int fileSuffixInt = fileName.indexOf(".");
+				String fileSuffix = fileName.substring(fileSuffixInt + 1);
+				System.out.println("File " + fileSuffix);
+
+				if (fileSuffix.toLowerCase().equals("pdf")) {
+					fileNameContent.append(fileName);
+					fileNameContent.append(',');
+					fileNameContent.append('\n');
+					//System.out.println("File " + fileName);
+					fileNames.add(fileName);
+				}
+
+			} else if (listOfFiles[i].isDirectory()) {
+				System.out.println("Directory " + listOfFiles[i].getName());
+			}
+		}
+		writeNamesToCSV(csvFileName, fileNameContent.toString());
+		return fileNames;
+	}
+
+	public static void writeNamesToCSV(String csvName, String content) {
+
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new File(csvName));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		pw.write(content);
+		pw.close();
+		System.out.println("done!");
+	}
+}
