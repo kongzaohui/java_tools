@@ -1,0 +1,24 @@
+package average.test;
+
+public class TestStringRemoveBlank {
+	public static void main(String[] args) {
+		String teString = "50=89 mas=56 89 78      ";
+		
+		int i = lastAlphaNumeric(teString);
+		
+		System.out.println(i);
+		//teString = teString.replaceAll("[\\s|\\u00A0]+", "");
+		//teString = teString.replaceAll("\\s+", "");
+		teString = teString.substring(0, i);
+		System.out.println("teString-->" + teString + "|");
+	}
+	
+	public static int lastAlphaNumeric(String s) {
+	    for (int i = s.length() - 1; i >= 0; i--) {
+	        char c = s.charAt(i);
+	        if (Character.isLetter(c) || Character.isDigit(c))
+	            return i;
+	    }
+	    return -1; // no alphanumeric character at all
+	}
+}
