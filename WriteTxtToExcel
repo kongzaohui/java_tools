@@ -1,0 +1,118 @@
+package average.test;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.util.Arrays;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+public class readTxtLines {
+
+	public static final String filePath = "C:\\Users\\zanderkong\\Desktop\\20180110FBG\\filenames.txt";
+
+	public static final String folderPath = "C:\\Users\\zanderkong\\Desktop\\20180110FBG\\excel";
+
+	public static void main(String[] args) {
+
+		try (BufferedReader brTxtNameLine = new BufferedReader(new FileReader(filePath))) {
+
+			String txtNameLine, txtContentLine;
+
+			while ((txtNameLine = brTxtNameLine.readLine()) != null) {
+
+				txtNameLine = txtNameLine.replace("\\", "\\\\");
+				System.out.println("txt的路径-->" + txtNameLine);
+
+				FileReader input = new FileReader(txtNameLine);
+				LineNumberReader count = new LineNumberReader(input);
+
+				while (count.skip(Long.MAX_VALUE) > 0) {
+					// Loop just in case the file is > Long.MAX_VALUE or skip()
+					// decides to not read the entire file
+				}
+
+				int ContentLineNumber = count.getLineNumber();
+				System.out.println("TXT中总行数-->" + ContentLineNumber);
+
+				String[][] matrix = new String[ContentLineNumber][];
+
+				BufferedReader brContentLine = new BufferedReader(new FileReader(txtNameLine));
+
+				int beginIndex = txtNameLine.indexOf("Peaks");
+				String excelName = txtNameLine.substring(beginIndex);
+				System.out.println("输出的excel名字-->" + excelName);
+
+				int r = 0;
+				while ((txtContentLine = brContentLine.readLine()) != null) {
+					// System.out.println("txt的内容-->"+txtContentLine);
+
+					int i = lastAlphaNumeric(txtContentLine);
+
+					txtContentLine = txtContentLine.substring(0, i + 1);
+					//System.out.println("txtContentLine-->" + txtContentLine);
+
+					String[] rows = new String[1];
+					// txtContentLine.split(txtContentLine, -1);
+					rows[0] = txtContentLine;
+					//System.out.println("rows[0]-->" + rows[0]);
+
+					matrix[r++] = rows[0].split("\t", -1);
+				}
+				generateExcel(matrix, excelName);
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void generateExcel(String[][] matrix, String excelName) {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet(excelName);
+		// 新建活页簿并命名为Java Books
+
+		int rowCount = 0;
+
+		for (String[] aBook : matrix) {
+			// Row row = sheet.createRow(++rowCount);
+			Row row = sheet.createRow(rowCount++);
+
+			int columnCount = 0;
+
+			for (Object field : aBook) {
+				Cell cell = row.createCell(columnCount++);
+				if (field instanceof String) {
+					cell.setCellValue((String) field);
+				} else if (field instanceof Integer) {
+					cell.setCellValue((Integer) field);
+				}
+			}
+
+		}
+
+		try (FileOutputStream outputStream = new FileOutputStream(folderPath + "\\" + excelName + ".xlsx")) {
+			workbook.write(outputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static int lastAlphaNumeric(String s) {
+		for (int i = s.length() - 1; i >= 0; i--) {
+			char c = s.charAt(i);
+			if (Character.isLetter(c) || Character.isDigit(c))
+				return i;
+		}
+		return -1; // no alphanumeric character at all
+	}
+
+}
