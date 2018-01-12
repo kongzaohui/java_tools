@@ -1,0 +1,65 @@
+package average.test;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class getTxtNames {
+
+	public static final String folderPath = "C:\\Users\\zanderkong\\Desktop\\20180110FBG";
+
+	public static void main(String[] args) {
+
+		try {
+			StringBuffer filePaths = new StringBuffer();
+			// 存储所有的txt的绝对路径
+
+			File folders = new File(folderPath);
+
+			File[] listOfFolders = folders.listFiles();
+
+			int foldersNumber = listOfFolders.length;
+
+			for (int i = 0; i < foldersNumber; i++) {
+
+				if (listOfFolders[i].isDirectory()) {
+
+					String folderName = listOfFolders[i].getName();
+					String folderFullPath = folderPath + "\\" + folderName;
+
+					System.out.println("Directory " + folderFullPath);
+
+					File files = new File(folderFullPath);
+					File[] listOfFiles = files.listFiles();
+					int filesNumber = listOfFiles.length;
+					System.out.println("文件的个数是-->" + filesNumber);
+
+					for (int j = 0; j < filesNumber; j++) {
+
+						if (listOfFiles[j].isFile()) {
+
+							String eachFilePaths = listOfFolders[i] + "\\" + listOfFiles[j].getName() + "\r\n";
+							//String换行必须使用"\r\n"
+
+							System.out.println("eachFilePaths-->" + eachFilePaths);
+
+							filePaths.append(eachFilePaths);
+
+						}
+
+					}
+
+				}
+				System.out.println("filePaths-->" + filePaths.toString());
+				Files.write(Paths.get(folderPath + "\\filenames.txt"), filePaths.toString().getBytes());
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
