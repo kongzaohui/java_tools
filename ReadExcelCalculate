@@ -1,0 +1,111 @@
+package average.test;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.Scanner;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+public class readXLSXFile {
+
+	public static final String folderPath = "C:\\Users\\zanderkong\\Desktop\\20180110FBG\\excel";
+
+	public static void main(String[] args) {
+
+		try {
+
+			String FILE_NAME = folderPath + "\\LIST.txt";
+
+			String content = new Scanner(new File(FILE_NAME)).useDelimiter("\\Z").next();
+
+			// String content = new
+			// String(Files.readAllBytes(Paths.get("abc.java")));
+			String[] contents = content.split("\r", -1);
+			
+			StringBuilder sb = new StringBuilder();
+
+			for (String Content : contents) {
+				
+				int beginIndex = Content.indexOf("Peaks");
+				
+				String excelName = folderPath + "\\" + Content.substring(beginIndex);
+
+				FileInputStream excelFile = new FileInputStream(new File(excelName));
+
+				// 获取excel文件
+				Workbook workbook = new XSSFWorkbook(excelFile);
+
+				// 获取第一页，即第一个活页簿
+				Sheet datatypeSheet = workbook.getSheetAt(0);
+				// Sheet sheet = workbook.getSheet(sheetName);
+				
+
+				for (int i = 5; i < 8; i++) {
+					Double double1Sum = 0.0;
+
+					int totalRowNumber = 0;
+
+					/*
+					 * int noOfColumns =
+					 * datatypeSheet.getRow(0).getPhysicalNumberOfCells();
+					 * System.out.println("总列数-->" + noOfColumns);
+					 */
+
+					int noOfColumns = datatypeSheet.getPhysicalNumberOfRows();
+					// System.out.println("总行数-->" + noOfColumns);
+
+					for (Row row : datatypeSheet) { // For each Row.
+						// Get the Cell at the Index / Column you want.
+
+						Cell cell = row.getCell(i);
+
+						// String line = cell.getStringCellValue();
+
+						DataFormatter formatter = new DataFormatter();
+						String line = formatter.formatCellValue(cell);
+
+						if (line != null && line != "") {
+
+							int beginRow = row.getRowNum();
+
+							totalRowNumber++;
+
+							Double doubleLine = Double.parseDouble(line);
+							double1Sum = double1Sum + doubleLine;
+						}
+
+					}
+					// System.out.println("总行数-->" + totalRowNumber);
+					// System.out.println("double1Sum-->" + double1Sum);
+					Double averageValue = double1Sum / totalRowNumber;
+					System.out.println("平均数是-->" + averageValue);
+
+					// sb.append(averageValue).append("\r\n" + ",");
+					sb.append(averageValue).append(",");
+				}
+				
+				sb.append("\r\n");
+			}
+
+				Files.write(Paths.get(folderPath + "\\AverageValue.txt"),
+						sb.toString().substring(0, sb.length() - 1).getBytes());
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
